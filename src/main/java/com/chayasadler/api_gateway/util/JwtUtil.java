@@ -26,9 +26,14 @@ public class JwtUtil {
     @Value("${JWT_PUBLIC_KEY}")
     private String publicKey;
 
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    private String customerId;
+
     private RSAPublicKey genKey() {
 
-        System.out.println("publickey : " + publicKey);
         String key = publicKey.replaceAll("-----BEGIN PUBLIC KEY-----","")
                 .replaceAll("-----END PUBLIC KEY-----","")
                 .replaceAll("\\s","");
@@ -61,7 +66,12 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
+        if(isTokenExpired(token))
+            return false;
+        else {
+            customerId = extractCustomerId(token);
+            return true;
+        }
     }
 
     private boolean isTokenExpired(String token) {
@@ -72,4 +82,9 @@ public class JwtUtil {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+    private String extractCustomerId(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
 }

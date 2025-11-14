@@ -25,16 +25,16 @@ public class GatewayConfig {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routeAuthService(){
+    public RouterFunction<ServerResponse> routeAuthService() {
 
         return GatewayRouterFunctions.route("auth-service-route")
                 .route(path("/auth/register")
-                        .and(POST("/auth/register")),
+                                .and(POST("/auth/register")),
                         HandlerFunctions.http())
                 .before(BeforeFilterFunctions.uri("http://localhost:8081"))
 
                 .route(path("/auth/login")
-                        .and(POST("/auth/login")),
+                                .and(POST("/auth/login")),
                         HandlerFunctions.http())
                 .before(BeforeFilterFunctions.uri("http://localhost:8081"))
 
@@ -42,15 +42,26 @@ public class GatewayConfig {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routeProtectedService(){
+    public RouterFunction<ServerResponse> routeProtectedProductService() {
 
         return GatewayRouterFunctions.route("product-service-route")
                 .route(path("/product/products")
-                .and(GET("/product/products")),
+                                .and(GET("/product/products")),
                         HandlerFunctions.http())
                 .filter(authenticationFilter)
                 .before(BeforeFilterFunctions.uri("http://localhost:8083"))
                 .build();
 
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> routeProtectedOrderService() {
+        return GatewayRouterFunctions.route("order-service-route")
+                .route(path("/app/orders")
+                                .and(POST("/app/orders")),
+                        HandlerFunctions.http())
+                .filter(authenticationFilter)
+                .before(BeforeFilterFunctions.uri("http://localhost:8084"))
+                .build();
     }
 }
